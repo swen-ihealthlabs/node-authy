@@ -80,28 +80,50 @@ Authy.prototype.verify = function (id, token, force, callback) {
     this._request("get", "/protected/json/verify/" + querystring.escape(cleanToken) + "/" + querystring.escape(id), {}, check_body_callback, qs);
 };
 
-Authy.prototype.request_sms = function (id, force, callback) {
+Authy.prototype.request_sms = function (id, params, force, callback) {
     var qs = {};
 
-    if (arguments.length > 2) {
+    if (arguments.length > 3) {
         qs.force = force;
-    } else {
+    } else if (arguments.length == 3) {
         callback = force;
+    } else {
+        callback = params;
     }
 
-    this._request("get", "/protected/json/sms/" + querystring.escape(id), {}, callback, qs);
+    options = {
+        locale: params.locale || 'en',
+        custom_message: params.custom_message,
+        code_length: params.code_length,
+        custom_code: params.custom_code
+    };
+
+    options = Object.assign(options, params);
+
+    this._request("get", "/protected/json/sms/" + querystring.escape(id), options, callback, qs);
 };
 
-Authy.prototype.request_call = function (id, force, callback) {
+Authy.prototype.request_call = function (id, params, force, callback) {
     var qs = {};
 
-    if (arguments.length > 2) {
+    if (arguments.length > 3) {
         qs.force = force;
-    } else {
+    } else if (arguments.length == 3){
         callback = force;
+    } else {
+        callback = params;
     }
 
-    this._request("get", "/protected/json/call/" + querystring.escape(id), {}, callback, qs);
+    options = {
+        locale: params.locale || 'en',
+        custom_message: params.custom_message,
+        code_length: params.code_length,
+        custom_code: params.custom_code
+    };
+
+    options = Object.assign(options, params);
+
+    this._request("get", "/protected/json/call/" + querystring.escape(id), options, callback, qs);
 };
 
 Authy.prototype.phones = function() {
